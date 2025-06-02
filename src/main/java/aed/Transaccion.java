@@ -16,11 +16,13 @@ public class Transaccion implements Comparable<Transaccion> {
     @Override
     public int compareTo(Transaccion otro) {
         throw new UnsupportedOperationException("Implementar!");
+        //HOLIS COMO ESTAS
     }
 
     @Override
     public boolean equals(Object otro){
         throw new UnsupportedOperationException("Implementar!");
+        //aaaaaaaaaaaaaaaa
     }
 
     public int monto() {
