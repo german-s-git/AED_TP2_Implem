@@ -37,45 +37,72 @@ public class Heap<T extends Comparable<T>> {
     }
 
     private void Bajar(int indice){
-        T   elem        = arbol.get(indice);
-        T   elemHijo    = null;
-        int indiceHijo  = 0;
-        int indiceHijoDer = 0;
-        int indiceHijoIzq = 0;
-        int size = arbol.size();
+        int     indiceHijoIzq   = hijoIzq(indice);
+        int     indiceHijoDer   = hijoDer(indice);
+        int     tamanio         = arbol.size();
+        boolean hayElem         = false;
+        boolean hayHijoIzq      = false;
+        boolean hayHijoDer      = false;
 
-        indiceHijoDer = hijoDer(indice);
-        indiceHijoIzq = hijoIzq(indice);
+        //es info redundate pero aporta a la legibilidad del codigo
+        if(indice < tamanio)
+            hayElem = true;
 
-        if(indiceHijoDer >= size && indiceHijoIzq >= size)
+        //si los potenciales hijos estan en una posicion mas grandes que el array...
+        //quiere decir que no hay hijos
+        if(indiceHijoIzq < tamanio && indiceHijoDer < tamanio){
+            hayHijoIzq = true;
+            hayHijoDer = true;
+        }
+        else if(indiceHijoIzq >= tamanio && indiceHijoDer < tamanio)
+            hayHijoDer = true;
+        else if(indiceHijoIzq < tamanio && indiceHijoDer >= tamanio)
+            hayHijoIzq = true;
 
-        if(arbol.get(hijoIzq(indice)).compareTo(arbol.get(hijoDer(indice))) > 0)
-            indiceHijo = hijoIzq(indice);
-        else
-            indiceHijo = hijoDer(indice);
+        if(hayElem && hayHijoIzq && hayHijoDer){
+            T hijoIzq = arbol.get(indiceHijoIzq);
+            T hijoDer = arbol.get(indiceHijoDer);
+            T elemT   = arbol.get(indice);
 
-        elemHijo = arbol.get(indiceHijo);
+            if(hijoIzq.compareTo(hijoDer) > 0){ //hijoIzq mayor
+                if(hijoIzq.compareTo(elemT) > 0){
+                    Swap(indice, indiceHijoIzq);
+                    Bajar(indiceHijoIzq);
+                }
+            }
+            else if (hijoDer.compareTo(hijoIzq) > 0){ //hijoDer mayor
+                if(hijoDer.compareTo(elemT) > 0){
+                    Swap(indice, indiceHijoDer);
+                    Bajar(indiceHijoDer);
+                }
+            }
+        }
+        else if(hayElem && hayHijoIzq && !hayHijoDer){
+            T hijoIzq = arbol.get(indiceHijoIzq);
+            T elemT   = arbol.get(indice);
 
-         while(indice > 0 && elem.compareTo(elemHijo) < 0){
-            Swap(indice, indiceHijo);
+            if(hijoIzq.compareTo(elemT) > 0){
+                Swap(indice, indiceHijoIzq);
+                Bajar(indiceHijoIzq);
+            }
+        }
+        else if(hayElem && !hayHijoIzq && hayHijoDer){
+            T hijoDer = arbol.get(indiceHijoDer);
+            T elemT   = arbol.get(indice);
 
-            indice = indiceHijo;
-
-            if(arbol.get(hijoIzq(indice)).compareTo(arbol.get(hijoDer(indice))) > 0)
-                indiceHijo = hijoIzq(indice);
-            else
-                indiceHijo = hijoDer(indice);
-
-            elemHijo = arbol.get(indiceHijo);
-         }
+            if(hijoDer.compareTo(elemT) > 0){
+                Swap(indice, indiceHijoDer);
+                Bajar(indiceHijoDer);
+            }
+        }
     }
 
     private void Swap(int indiceA, int indiceB){
         T elemA   = arbol.get(indiceA);
         T elemB   = arbol.get(indiceB);
 
-        arbol.add(indiceA, elemB);
-        arbol.add(indiceB, elemA);
+        arbol.set(indiceA, elemB);
+        arbol.set(indiceB, elemA);
     }
 
     private int Padre(int indice){
@@ -91,11 +118,14 @@ public class Heap<T extends Comparable<T>> {
     }
 
     public void SacarMaximo(){
-        if(arbol.size() > 0){
+        if (arbol.size() == 1) {
+            arbol.remove(0);
+        }
+        else if(arbol.size() > 1){
             T ultimoElem = arbol.get(arbol.size()-1);
 
             arbol.remove(arbol.size()-1);
-            arbol.add(0, ultimoElem);
+            arbol.set(0, ultimoElem);
 
             Bajar(0);
         }
