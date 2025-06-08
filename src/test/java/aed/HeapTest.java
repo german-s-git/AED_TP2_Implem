@@ -7,14 +7,14 @@ import org.junit.jupiter.api.Test;
 public class HeapTest {
     @Test
     void nuevoHeapVacio(){
-        Heap<Integer> miHeap = new Heap<>();
+        HeapSobreArrayList<Integer> miHeap = new HeapSobreArrayList<>();
 
         assertEquals(null, miHeap.ConsultarMaximo());
     }
 
     @Test
     void agregarUnElem(){
-        Heap<Integer> miHeap = new Heap<>();
+        HeapSobreArrayList<Integer> miHeap = new HeapSobreArrayList<>();
 
         miHeap.Agregar(5);
 
@@ -23,8 +23,8 @@ public class HeapTest {
 
     @Test
     void agregarDosElem(){
-        Heap<Integer> miHeap1 = new Heap<>();
-        Heap<Integer> miHeap2 = new Heap<>();
+        HeapSobreArrayList<Integer> miHeap1 = new HeapSobreArrayList<>();
+        HeapSobreArrayList<Integer> miHeap2 = new HeapSobreArrayList<>();
 
         miHeap1.Agregar(5);
         miHeap1.Agregar(10);
@@ -39,9 +39,9 @@ public class HeapTest {
 
     @Test
     void agregarTresElem(){
-        Heap<Integer> miHeap1 = new Heap<>();
-        Heap<Integer> miHeap2 = new Heap<>();
-        Heap<Integer> miHeap3 = new Heap<>();
+        HeapSobreArrayList<Integer> miHeap1 = new HeapSobreArrayList<>();
+        HeapSobreArrayList<Integer> miHeap2 = new HeapSobreArrayList<>();
+        HeapSobreArrayList<Integer> miHeap3 = new HeapSobreArrayList<>();
 
         miHeap1.Agregar(10);
         miHeap1.Agregar(5);
@@ -64,7 +64,7 @@ public class HeapTest {
 
     @Test
     void agregarMuchitos(){
-        Heap<Integer> miHeap = new Heap<>();
+        HeapSobreArrayList<Integer> miHeap = new HeapSobreArrayList<>();
 
         for(int i = 2; i < 1000; i++){
             int signo     = (int) Math.pow(-1, i);
@@ -83,7 +83,7 @@ public class HeapTest {
 
     @Test
     void agregarSacarUnElem(){
-        Heap<Integer> miHeap = new Heap<>();
+        HeapSobreArrayList<Integer> miHeap = new HeapSobreArrayList<>();
 
         miHeap.Agregar(5);
 
@@ -96,7 +96,7 @@ public class HeapTest {
 
     @Test
     void agregarSacarDosElem(){
-        Heap<Integer> miHeap = new Heap<>();
+        HeapSobreArrayList<Integer> miHeap = new HeapSobreArrayList<>();
 
         miHeap.Agregar(5);
         miHeap.Agregar(10);
@@ -112,7 +112,7 @@ public class HeapTest {
 
     @Test
     void agregarSacarMuchitos(){
-        Heap<Integer> miHeap = new Heap<>();
+        HeapSobreArrayList<Integer> miHeap = new HeapSobreArrayList<>();
 
         int[] numArmado     = new int[N_ELEM];
         int[] numArmadoPos  = new int[N_ELEM/2];
