@@ -1,135 +1,110 @@
+
 package aed;
 
 import java.util.ArrayList;
 
 public class HeapSobreArrayList<T extends Comparable<T>> implements Heap<T> {
-    private ArrayList<T> arbol;
-    
+    private ArrayList<Handle> arbol;
+
     public HeapSobreArrayList(){
         arbol = new ArrayList<>();
     }
 
     public T ConsultarMaximo(){     //Esto es O(1)
-        T maxElem;
-        if(arbol.size() == 0)
-            maxElem = null;         //Esto es O(1)
-        else
-            maxElem = arbol.get(0); //Esto es O(1)
-        return maxElem;
+        T max = null;
+
+        if(arbol.size() > 0)
+            return arbol.get(0).valor;
+
+        return max;
     }
 
     public void Agregar(T elem){    //Esto es O(log n)
-        arbol.add(elem);            //Si no se redimensiona el array, esto es O(1)
-        Subir(arbol.size()-1);      //log(n), donde n es la cant elem en el arbol
+        Handle h = new Handle(elem, arbol.size());
+        arbol.add(h);               // O(1)
+        Subir(arbol.size()-1);      // O(log n)
     }
 
     private void Subir(int indice){
-        T elem      = arbol.get(indice);
-        T elemPadre = arbol.get(Padre(indice));
-
-        while (indice > 0 && elem.compareTo(elemPadre) > 0) { //log(n), donde n es la cant elem en el arbol
+        while (indice > 0 && arbol.get(indice).valor.compareTo(arbol.get(Padre(indice)).valor) > 0) {
             Swap(indice, Padre(indice));
-
-            indice      = Padre(indice);
-            elem        = arbol.get(indice);
-            elemPadre   = arbol.get(Padre(indice));            
+            indice = Padre(indice);
         }
     }
 
     private void Bajar(int indice){
-        int     indiceHijoIzq   = hijoIzq(indice);
-        int     indiceHijoDer   = hijoDer(indice);
-        int     tamanio         = arbol.size();
-        boolean hayElem         = false;
-        boolean hayHijoIzq      = false;
-        boolean hayHijoDer      = false;
+        int hijoIzq = HijoIzq(indice);
+        int hijoDer = HijoDer(indice);
+        int mayor   = indice;
 
-        //es info redundate pero aporta a la legibilidad del codigo
-        if(indice < tamanio)
-            hayElem = true;
+        if (hijoIzq < arbol.size() && arbol.get(hijoIzq).valor.compareTo(arbol.get(mayor).valor) > 0)
+            mayor = hijoIzq;
+        if (hijoDer < arbol.size() && arbol.get(hijoDer).valor.compareTo(arbol.get(mayor).valor) > 0)
+            mayor = hijoDer;
 
-        //si los potenciales hijos estan en una posicion mas grandes que el array...
-        //quiere decir que no hay hijos
-        if(indiceHijoIzq < tamanio && indiceHijoDer < tamanio){
-            hayHijoIzq = true;
-            hayHijoDer = true;
-        }
-        else if(indiceHijoIzq >= tamanio && indiceHijoDer < tamanio)
-            hayHijoDer = true;
-        else if(indiceHijoIzq < tamanio && indiceHijoDer >= tamanio)
-            hayHijoIzq = true;
-
-        if(hayElem && hayHijoIzq && hayHijoDer){
-            T hijoIzq = arbol.get(indiceHijoIzq);
-            T hijoDer = arbol.get(indiceHijoDer);
-            T elemT   = arbol.get(indice);
-
-            if(hijoIzq.compareTo(hijoDer) > 0){ //hijoIzq mayor
-                if(hijoIzq.compareTo(elemT) > 0){
-                    Swap(indice, indiceHijoIzq);
-                    Bajar(indiceHijoIzq);
-                }
-            }
-            else if (hijoDer.compareTo(hijoIzq) > 0){ //hijoDer mayor
-                if(hijoDer.compareTo(elemT) > 0){
-                    Swap(indice, indiceHijoDer);
-                    Bajar(indiceHijoDer);
-                }
-            }
-        }
-        else if(hayElem && hayHijoIzq && !hayHijoDer){
-            T hijoIzq = arbol.get(indiceHijoIzq);
-            T elemT   = arbol.get(indice);
-
-            if(hijoIzq.compareTo(elemT) > 0){
-                Swap(indice, indiceHijoIzq);
-                Bajar(indiceHijoIzq);
-            }
-        }
-        else if(hayElem && !hayHijoIzq && hayHijoDer){
-            T hijoDer = arbol.get(indiceHijoDer);
-            T elemT   = arbol.get(indice);
-
-            if(hijoDer.compareTo(elemT) > 0){
-                Swap(indice, indiceHijoDer);
-                Bajar(indiceHijoDer);
-            }
+        //si el mayor resultó ser el indice, entonces no hay que seguir bajando nada
+        if (mayor != indice){
+            Swap(indice, mayor);
+            Bajar(mayor);
         }
     }
 
     private void Swap(int indiceA, int indiceB){
-        T elemA   = arbol.get(indiceA);
-        T elemB   = arbol.get(indiceB);
+        Handle hA = arbol.get(indiceA);
+        Handle hB = arbol.get(indiceB);
 
-        arbol.set(indiceA, elemB);
-        arbol.set(indiceB, elemA);
+        arbol.set(indiceA, hB);
+        arbol.set(indiceB, hA);
+        hA.indice = indiceB;
+        hB.indice = indiceA;
     }
 
-    private int Padre(int indice){
-        return (int) Math.floor( (indice-1)/2 );
+    private int Padre(int i){
+        return (int) Math.floor((i-1)/2);
+    }
+    private int HijoIzq(int i){
+        return 2*i + 1;
+    }
+    private int HijoDer(int i){
+        return 2*i + 2;
     }
 
-    private int hijoIzq(int indice){
-        return 2*indice + 1;
-    }
+    public void SacarMaximo(){ 
+        if(arbol.size() > 0){
+            Handle ultimo = arbol.get(arbol.size() - 1);
 
-    private int hijoDer(int indice){
-        return 2*indice + 2;
-    }
-
-    public void SacarMaximo(){
-        if (arbol.size() == 1) {
-            arbol.remove(0);
-        }
-        else if(arbol.size() > 1){
-            T ultimoElem = arbol.get(arbol.size()-1);
-
-            arbol.remove(arbol.size()-1);
-            arbol.set(0, ultimoElem);
-
+            arbol.get(0).valor = null;
+            arbol.set(0, ultimo);
+            ultimo.indice = 0;
+            arbol.remove(arbol.size() - 1);
             Bajar(0);
         }
     }
 
-    //public void Heapify() //preguntar
+
+    private class Handle {
+        private T valor;
+        private int indice;
+
+        public Handle(T valor, int indice){
+            this.valor = valor;
+            this.indice = indice;
+        }
+
+        public T getValor() {
+            return valor;
+        }
+
+        public int getIndice() {
+            return indice;
+        }
+
+        public void setValor(T nuevoValor) {
+            this.valor = nuevoValor;
+
+            //Si tiene que subir, bajar no hace nada... y viceversa
+            Subir(indice);
+            Bajar(indice);
+        }
+    }
 }

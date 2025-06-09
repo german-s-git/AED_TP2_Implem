@@ -1,6 +1,8 @@
 package aed;
 
 public class Berretacoin {
+    private ListaEnlazada<ListaEnlazada<Transaccion>> blockchain = new ListaEnlazada<>();
+    private HeapSobreArrayList<ListaEnlazada<Transaccion>.Handle> heapTx = new HeapSobreArrayList<>();
 
     public Berretacoin(int n_usuarios){
         throw new UnsupportedOperationException("Implementar!");
