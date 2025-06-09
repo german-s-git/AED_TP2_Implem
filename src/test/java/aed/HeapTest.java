@@ -2,6 +2,8 @@ package aed;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
+
 import org.junit.jupiter.api.Test;
 
 public class HeapTest {
@@ -155,6 +157,46 @@ public class HeapTest {
 
     @Test
     void handlePocos(){
-        
+        HeapSobreArrayList<Integer> miHeap = new HeapSobreArrayList<>();
+        ArrayList<HeapSobreArrayList<Integer>.Handle> referencias = new ArrayList<>(7);
+
+        /*
+         *      10
+         *    8    7
+         *   3 2  1 4
+         */
+        referencias.add(miHeap.Agregar(10));
+        referencias.add(miHeap.Agregar(8));
+        referencias.add(miHeap.Agregar(7));
+        referencias.add(miHeap.Agregar(3));
+        referencias.add(miHeap.Agregar(2));
+        referencias.add(miHeap.Agregar(1));
+        referencias.add(miHeap.Agregar(4));
+
+        assertEquals(10, miHeap.ConsultarMaximo());
+        referencias.get(1).setValor(12);
+        assertEquals(12, miHeap.ConsultarMaximo());
+        referencias.get(1).setValor(8);
+        assertEquals(10, miHeap.ConsultarMaximo());
+
+        assertEquals(4, referencias.get(6).getValor());
+        assertEquals(6, referencias.get(6).getIndice());
+        miHeap.SacarMaximo();
+        assertEquals(null, referencias.get(0).getValor());
+        assertEquals(-1, referencias.get(0).getIndice());
+        assertEquals(4, referencias.get(6).getValor());
+        assertEquals(1, referencias.get(6).getIndice());
+
+        assertEquals(2, referencias.get(4).getValor());
+        referencias.get(4).setValor(100);
+        assertEquals(100, miHeap.ConsultarMaximo());
+        referencias.get(4).setValor(6);
+        assertEquals(8, miHeap.ConsultarMaximo());
+
+        miHeap.SacarMaximo();
+        assertEquals(7, miHeap.ConsultarMaximo());
+        miHeap.SacarMaximo();
+        assertEquals(6, miHeap.ConsultarMaximo());
+
     }
 }

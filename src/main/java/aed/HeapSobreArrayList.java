@@ -19,10 +19,12 @@ public class HeapSobreArrayList<T extends Comparable<T>> implements Heap<T> {
         return max;
     }
 
-    public void Agregar(T elem){    //Esto es O(log n)
+    public Handle Agregar(T elem){    //Esto es O(log n)
         Handle h = new Handle(elem, arbol.size());
         arbol.add(h);               // O(1)
         Subir(arbol.size()-1);      // O(log n)
+
+        return h;
     }
 
     private void Subir(int indice){
@@ -37,15 +39,17 @@ public class HeapSobreArrayList<T extends Comparable<T>> implements Heap<T> {
         int hijoDer = HijoDer(indice);
         int mayor   = indice;
 
-        if (hijoIzq < arbol.size() && arbol.get(hijoIzq).valor.compareTo(arbol.get(mayor).valor) > 0)
-            mayor = hijoIzq;
-        if (hijoDer < arbol.size() && arbol.get(hijoDer).valor.compareTo(arbol.get(mayor).valor) > 0)
-            mayor = hijoDer;
+        if(indice > -1){
+            if (hijoIzq < arbol.size() && arbol.get(hijoIzq).valor.compareTo(arbol.get(mayor).valor) > 0)
+                mayor = hijoIzq;
+            if (hijoDer < arbol.size() && arbol.get(hijoDer).valor.compareTo(arbol.get(mayor).valor) > 0)
+                mayor = hijoDer;
 
-        //si el mayor resultó ser el indice, entonces no hay que seguir bajando nada
-        if (mayor != indice){
-            Swap(indice, mayor);
-            Bajar(mayor);
+            //si el mayor resultó ser el indice, entonces no hay que seguir bajando nada
+            if (mayor != indice){
+                Swap(indice, mayor);
+                Bajar(mayor);
+            }
         }
     }
 
@@ -73,7 +77,9 @@ public class HeapSobreArrayList<T extends Comparable<T>> implements Heap<T> {
         if(arbol.size() > 0){
             Handle ultimo = arbol.get(arbol.size() - 1);
 
-            arbol.get(0).valor = null;
+            //"rompo" al primero
+            arbol.get(0).valor  = null;
+            arbol.get(0).indice = -1;
             arbol.set(0, ultimo);
             ultimo.indice = 0;
             arbol.remove(arbol.size() - 1);
@@ -82,7 +88,7 @@ public class HeapSobreArrayList<T extends Comparable<T>> implements Heap<T> {
     }
 
 
-    private class Handle {
+    public class Handle {
         private T valor;
         private int indice;
 
