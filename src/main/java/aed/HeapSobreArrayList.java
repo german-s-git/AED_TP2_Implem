@@ -87,7 +87,6 @@ public class HeapSobreArrayList<T extends Comparable<T>> implements Heap<T> {
         }
     }
 
-
     public class Handle {
         private T valor;
         private int indice;

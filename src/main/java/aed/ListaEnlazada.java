@@ -2,7 +2,9 @@ package aed;
 
 import java.util.*;
 
-public class ListaEnlazada<T> implements Secuencia<T> {
+//el "T extends Comparable<T>" es necesario por la implementación del compareTo del Handle de la ListaEnlazada
+//el Comparable<ListaEnlazada<T>> es porque al hacer T comparable, como queremos hacer una listaEnlazada de listaEnlazada, listaEnlazada necesita ser comparable
+public class ListaEnlazada<T extends Comparable<T>> implements Secuencia<T>, Comparable<ListaEnlazada<T>> {
     // Completar atributos privados
     private Nodo primerito;
     private Nodo ultimito;
@@ -239,10 +241,30 @@ public class ListaEnlazada<T> implements Secuencia<T> {
             nodoApuntado = n;
         }
 
+        public void delete(){
+            Nodo nodoAnterior    = nodoApuntado.ant;
+            Nodo nodoSiguiente   = nodoApuntado.sig;
+
+            if(nodoAnterior != null)
+                nodoAnterior.sig    = nodoSiguiente;
+            else //quiero borrar el primer elemento
+                primerito   = nodoSiguiente;
+            if(nodoSiguiente != null)
+                nodoSiguiente.ant   = nodoAnterior;
+            else //quiero borrar el ultimo elemento
+                ultimito   = nodoAnterior;
+        }
+
         @Override
         public int compareTo(Handle otro) {
-            throw new UnsupportedOperationException("Implementar!");
+            return this.nodoApuntado.elemento.compareTo(otro.nodoApuntado.elemento);
         }
+    }
+
+    //en berretacoin no se utiliza, pero necesito que esté definido 
+    @Override
+    public int compareTo(ListaEnlazada<T> otra) {
+        return Integer.compare(this.longitud(), otra.longitud());
     }
 
 }
