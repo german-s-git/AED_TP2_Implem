@@ -3,6 +3,8 @@ package aed;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -198,5 +200,25 @@ public class HeapTest {
         miHeap.SacarMaximo();
         assertEquals(6, miHeap.ConsultarMaximo());
 
+    }
+
+    @Test
+    void heapificar(){
+        List<Integer> listaNumeros = Arrays.asList(2, 1, 3, 5, 4);
+        HeapSobreArrayList<Integer> miHeap = new HeapSobreArrayList<>();
+
+        miHeap.Heapify(listaNumeros);
+
+        assertEquals(5, miHeap.ConsultarMaximo());
+        miHeap.SacarMaximo();
+        assertEquals(4, miHeap.ConsultarMaximo());
+        miHeap.SacarMaximo();
+        assertEquals(3, miHeap.ConsultarMaximo());
+        miHeap.SacarMaximo();
+        assertEquals(2, miHeap.ConsultarMaximo());
+        miHeap.SacarMaximo();
+        assertEquals(1, miHeap.ConsultarMaximo());
+        miHeap.SacarMaximo();
+        assertEquals(null, miHeap.ConsultarMaximo());
     }
 }

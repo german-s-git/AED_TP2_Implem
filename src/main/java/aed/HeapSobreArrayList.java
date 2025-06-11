@@ -2,6 +2,7 @@
 package aed;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class HeapSobreArrayList<T extends Comparable<T>> implements Heap<T> {
     private ArrayList<Handle> arbol;
@@ -87,6 +88,20 @@ public class HeapSobreArrayList<T extends Comparable<T>> implements Heap<T> {
         }
     }
 
+    public void Heapify(List<T> elementos) {
+        arbol = new ArrayList<>(elementos.size());
+
+        //Crear handles para todos los elementos
+        for (int i = 0; i < elementos.size(); i++) {
+            arbol.add(new Handle(elementos.get(i), i));
+        }
+
+        //Empezamos desde el ultimo nodo que tiene hijos y vamos hacia arriba
+        for (int i = (arbol.size() / 2) - 1; i >= 0; i--) {
+            Bajar(i); //Reordenamos el subárbol con raiz en i
+        }
+    }
+
     public class Handle {
         private T valor;
         private int indice;
@@ -112,4 +127,5 @@ public class HeapSobreArrayList<T extends Comparable<T>> implements Heap<T> {
             Bajar(indice);
         }
     }
+    
 }

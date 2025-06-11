@@ -20,6 +20,11 @@ public class UsuarioTests {
         assertEquals(0, u.getSaldo());
         u.setSaldo(10);
         assertEquals(10, u.getSaldo());
+
+        u.sumarSaldo(5);
+        assertEquals(15, u.getSaldo());
+        u.restarSaldo(2);
+        assertEquals(13, u.getSaldo());
     }
 
     @Test

@@ -34,5 +34,12 @@ public class Usuario implements Comparable<Usuario>{
         this.saldo = saldo;
     }
 
+    public void sumarSaldo(int saldo){
+        this.saldo += saldo;
+    }
+
+    public void restarSaldo(int saldo){
+        this.saldo -= saldo;
+    }
 
 }

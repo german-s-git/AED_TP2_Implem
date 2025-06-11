@@ -1,5 +1,7 @@
 package aed;
 
+import aed.ListaEnlazada.Handle;
+
 interface Secuencia<T> {
 
     /**
@@ -12,13 +14,13 @@ interface Secuencia<T> {
      * Agrega un elemento al principio de la secuencia.
      * 
      */
-    public void agregarAdelante(T elem);
+    public Handle agregarAdelante(T elem);
 
     /**
      * Agrega un elemento al final de la secuencia.
      * 
      */
-    public void agregarAtras(T elem);
+    public Handle agregarAtras(T elem);
 
     /**
      * Retorna el elemento en la i-esima posicion.

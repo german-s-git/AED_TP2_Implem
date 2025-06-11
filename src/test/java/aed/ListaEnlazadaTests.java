@@ -2,6 +2,8 @@ package aed;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
+
 import org.junit.jupiter.api.Test;
 
 class ListaEnlazadaTests {
@@ -286,6 +288,25 @@ class ListaEnlazadaTests {
         assertEquals(44, it.anterior());
         assertTrue(it.hayAnterior());
         assertEquals(43, it.anterior());
+    }
+
+    @Test
+    void handlePocos(){
+        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+        ArrayList<ListaEnlazada<Integer>.Handle> ref = new ArrayList<>();
+
+        ref.add(lista.agregarAtras(1));
+        ref.add(lista.agregarAtras(2));
+        ref.add(lista.agregarAtras(3));
+
+        assertEquals(1, ref.get(0).get());
+        assertEquals(2, ref.get(1).get());
+        assertEquals(3, ref.get(2).get());
+
+        ref.get(1).delete();
+        assertEquals(1, lista.obtener(0));
+        assertEquals(3, lista.obtener(1));
+        assertEquals(null, lista.obtener(2));
     }
 
 }

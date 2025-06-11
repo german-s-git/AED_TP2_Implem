@@ -47,7 +47,7 @@ public class ListaEnlazada<T extends Comparable<T>> implements Secuencia<T>, Com
         return cant_elem;
     }
 
-    public void agregarAdelante(T elem) {
+    public Handle agregarAdelante(T elem) {
         Nodo nuevo;
 
         if (primerito == null && ultimito == null) {
@@ -61,9 +61,11 @@ public class ListaEnlazada<T extends Comparable<T>> implements Secuencia<T>, Com
             
             primerito = nuevo;
         }
+
+        return new Handle(nuevo);
     }
 
-    public void agregarAtras(T elem) {
+    public Handle agregarAtras(T elem) {
         Nodo nuevo;
 
         if (primerito == null && ultimito == null) {
@@ -77,6 +79,8 @@ public class ListaEnlazada<T extends Comparable<T>> implements Secuencia<T>, Com
             
             ultimito = nuevo;
         }
+
+        return new Handle(nuevo);
     }
 
     public T obtener(int i) {
@@ -89,7 +93,8 @@ public class ListaEnlazada<T extends Comparable<T>> implements Secuencia<T>, Com
                 actual = actual.sig;
         }
 
-        elem = actual.elemento;
+        if(actual != null)
+            elem = actual.elemento;
 
         return elem;
     }
@@ -239,6 +244,18 @@ public class ListaEnlazada<T extends Comparable<T>> implements Secuencia<T>, Com
         private Nodo nodoApuntado;
         public Handle ( Nodo n ) {
             nodoApuntado = n;
+        }
+
+        //get y delete es lo minimo que necesitamos para Berretacoin
+
+        public T get(){
+            T devolucion = null;
+
+            if(nodoApuntado != null)
+                devolucion = nodoApuntado.elemento;
+            else
+                devolucion = null;
+            return devolucion;
         }
 
         public void delete(){
