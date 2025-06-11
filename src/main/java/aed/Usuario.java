@@ -11,7 +11,14 @@ public class Usuario implements Comparable<Usuario>{
 
     @Override
     public int compareTo(Usuario otro) {
-        throw new UnsupportedOperationException("Implementar!");
+        int comparacion = 0;
+
+        if(this.saldo != otro.saldo)    //el mayor es el de saldo mayor
+            comparacion = this.saldo - otro.saldo;
+        else    //si hay empate de saldos, el mayor es el de menor id
+            comparacion = (-1)*(this.id - otro.id);
+
+        return comparacion;
     }
 
 
@@ -21,6 +28,10 @@ public class Usuario implements Comparable<Usuario>{
 
     public int getSaldo(){
         return saldo;
+    }
+
+    public void setSaldo(int saldo){
+        this.saldo = saldo;
     }
 
 
