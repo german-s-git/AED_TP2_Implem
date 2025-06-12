@@ -18,13 +18,11 @@ public class UsuarioTests {
         Usuario u = new Usuario(0, 0);
 
         assertEquals(0, u.getSaldo());
-        u.setSaldo(10);
-        assertEquals(10, u.getSaldo());
 
-        u.sumarSaldo(5);
-        assertEquals(15, u.getSaldo());
-        u.restarSaldo(2);
-        assertEquals(13, u.getSaldo());
+        u = u.sumarSaldo(5);
+        assertEquals(5, u.getSaldo());
+        u = u.restarSaldo(2);
+        assertEquals(3, u.getSaldo());
     }
 
     @Test
@@ -33,9 +31,9 @@ public class UsuarioTests {
         Usuario u2 = new Usuario(1, 1);
 
         assertTrue(u1.compareTo(u2) < 0);
-        u1.setSaldo(2);
+        u1 = u1.sumarSaldo(2);
         assertTrue(u1.compareTo(u2) > 0);
-        u1.setSaldo(1);
+        u1 = u1.restarSaldo(1);
         assertTrue(u1.compareTo(u2) > 0); //pues el mayor es el de menor id
 
     }
