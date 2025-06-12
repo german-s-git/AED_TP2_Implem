@@ -88,18 +88,23 @@ public class HeapSobreArrayList<T extends Comparable<T>> implements Heap<T> {
         }
     }
 
-    public void Heapify(List<T> elementos) {
+    public ArrayList<Handle> Heapify(List<T> elementos) {
+        ArrayList<Handle> handlesHeapEnOrdenDeEntrada = new ArrayList<>(); 
         arbol = new ArrayList<>(elementos.size());
 
         //Crear handles para todos los elementos
         for (int i = 0; i < elementos.size(); i++) {
-            arbol.add(new Handle(elementos.get(i), i));
+            Handle h = new Handle(elementos.get(i), i);
+            arbol.add(h);
+            handlesHeapEnOrdenDeEntrada.add(h);
         }
 
         //Empezamos desde el ultimo nodo que tiene hijos y vamos hacia arriba
         for (int i = (arbol.size() / 2) - 1; i >= 0; i--) {
             Bajar(i); //Reordenamos el subárbol con raiz en i
         }
+
+        return handlesHeapEnOrdenDeEntrada; //PREGUNTAR
     }
 
     public class Handle {

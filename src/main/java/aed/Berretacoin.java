@@ -14,13 +14,14 @@ public class Berretacoin {
     private int cantTxSinCreacion;
 
 
-    public Berretacoin(int n_usuarios){ //O(n)
+    public Berretacoin(int n_usuarios){ // 3*P -> O(P)
         blockchain      = new ListaEnlazada<>();
 
         heapUltBloque   = new HeapSobreArrayList<>();
 
+        ArrayList<Usuario> listaUsuarios = new ArrayList<>();
         heapUsuarios    = new HeapSobreArrayList<>();
-        refUsuarios     = new ArrayList<>(n_usuarios+1);
+        refUsuarios     = new ArrayList<>();
 
         montoMedio          = 0;
         sumatoriaMontos     = 0;
@@ -28,13 +29,13 @@ public class Berretacoin {
         cantTxSinCreacion   = 0;
 
         //como queremos que el id usuario coincida con la posicion en el array, metemos al "usuario 0" pero es un null
-        for(int i=0; i<=n_usuarios; i++){                   //O(n)
+        for(int i=1; i<=n_usuarios; i++){                   //O(P)
             Usuario u = new Usuario(i, 0);
-            if(i == 0)
-                refUsuarios.add(null);                    
-            else
-                refUsuarios.add(heapUsuarios.Agregar(u));
+            listaUsuarios.add(u);
         }
+
+        refUsuarios.add(null); //esto es para que coincida la posicion en el array con el ID del usuario
+        refUsuarios.addAll(heapUsuarios.Heapify(listaUsuarios)); // 2*O(P)
     }
 
     public void agregarBloque(Transaccion[] transacciones){ // O(n*logP + n) -> O(n*logP)
