@@ -22,6 +22,11 @@ public class Berretacoin {
         heapUsuarios    = new HeapSobreArrayList<>();
         refUsuarios     = new ArrayList<>(n_usuarios+1);
 
+        montoMedio          = 0;
+        sumatoriaMontos     = 0;
+        cantTxUltBloque     = 0;
+        cantTxSinCreacion   = 0;
+
         //como queremos que el id usuario coincida con la posicion en el array, metemos al "usuario 0" pero es un null
         for(int i=0; i<=n_usuarios; i++){
             Usuario u = new Usuario(i, 0);
@@ -41,6 +46,11 @@ public class Berretacoin {
         int monto = 0;
         int id_c  = 0; //comprador
         int id_v  = 0; //vendedor
+
+        montoMedio          = 0;
+        sumatoriaMontos     = 0;
+        cantTxUltBloque     = 0;
+        cantTxSinCreacion   = 0;
 
         cantTxUltBloque = transacciones.length;
 
