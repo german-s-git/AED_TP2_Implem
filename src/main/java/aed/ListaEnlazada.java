@@ -2,7 +2,9 @@ package aed;
 
 import java.util.*;
 
-public class ListaEnlazada<T> implements Secuencia<T> {
+//el "T extends Comparable<T>" es necesario por la implementación del compareTo del Handle de la ListaEnlazada
+//el Comparable<ListaEnlazada<T>> es porque al hacer T comparable, como queremos hacer una listaEnlazada de listaEnlazada, listaEnlazada necesita ser comparable
+public class ListaEnlazada<T extends Comparable<T>> implements Secuencia<T>, Comparable<ListaEnlazada<T>> {
     // Completar atributos privados
     private Nodo primerito;
     private Nodo ultimito;
@@ -45,7 +47,7 @@ public class ListaEnlazada<T> implements Secuencia<T> {
         return cant_elem;
     }
 
-    public void agregarAdelante(T elem) {
+    public Handle agregarAdelante(T elem) {
         Nodo nuevo;
 
         if (primerito == null && ultimito == null) {
@@ -59,9 +61,11 @@ public class ListaEnlazada<T> implements Secuencia<T> {
             
             primerito = nuevo;
         }
+
+        return new Handle(nuevo);
     }
 
-    public void agregarAtras(T elem) {
+    public Handle agregarAtras(T elem) {
         Nodo nuevo;
 
         if (primerito == null && ultimito == null) {
@@ -75,6 +79,8 @@ public class ListaEnlazada<T> implements Secuencia<T> {
             
             ultimito = nuevo;
         }
+
+        return new Handle(nuevo);
     }
 
     public T obtener(int i) {
@@ -87,7 +93,8 @@ public class ListaEnlazada<T> implements Secuencia<T> {
                 actual = actual.sig;
         }
 
-        elem = actual.elemento;
+        if(actual != null)
+            elem = actual.elemento;
 
         return elem;
     }
@@ -239,10 +246,42 @@ public class ListaEnlazada<T> implements Secuencia<T> {
             nodoApuntado = n;
         }
 
+        //get y delete es lo minimo que necesitamos para Berretacoin
+
+        public T get(){
+            T devolucion = null;
+
+            if(nodoApuntado != null)
+                devolucion = nodoApuntado.elemento;
+            else
+                devolucion = null;
+            return devolucion;
+        }
+
+        public void delete(){
+            Nodo nodoAnterior    = nodoApuntado.ant;
+            Nodo nodoSiguiente   = nodoApuntado.sig;
+
+            if(nodoAnterior != null)
+                nodoAnterior.sig    = nodoSiguiente;
+            else //quiero borrar el primer elemento
+                primerito   = nodoSiguiente;
+            if(nodoSiguiente != null)
+                nodoSiguiente.ant   = nodoAnterior;
+            else //quiero borrar el ultimo elemento
+                ultimito   = nodoAnterior;
+        }
+
         @Override
         public int compareTo(Handle otro) {
-            throw new UnsupportedOperationException("Implementar!");
+            return this.nodoApuntado.elemento.compareTo(otro.nodoApuntado.elemento);
         }
+    }
+
+    //en berretacoin no se utiliza, pero necesito que esté definido 
+    @Override
+    public int compareTo(ListaEnlazada<T> otra) {
+        return Integer.compare(this.longitud(), otra.longitud());
     }
 
 }
