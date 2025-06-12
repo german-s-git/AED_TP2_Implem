@@ -9,6 +9,9 @@ public class Berretacoin {
     private HeapSobreArrayList<Usuario>                     heapUsuarios;
     private ArrayList<HeapSobreArrayList<Usuario>.Handle>   refUsuarios;
     private int montoMedio;
+    private int sumatoriaMontos;
+    private int cantTxUltBloque;
+    private int cantTxSinCreacion;
 
 
     public Berretacoin(int n_usuarios){ //O(n)
@@ -32,14 +35,16 @@ public class Berretacoin {
     public void agregarBloque(Transaccion[] transacciones){ //O(n*log P)
         ultBloque   = new ListaEnlazada<>();
         ArrayList<ListaEnlazada<Transaccion>.Handle> handlesUltBloque = new ArrayList<>(transacciones.length);
+        HeapSobreArrayList<Usuario>.Handle handleHeapUsuarios = null;
+        Usuario usuarioModificarSaldo = null;
         Transaccion txActual = null;
         int monto = 0;
         int id_c  = 0; //comprador
         int id_v  = 0; //vendedor
-        int sumatoria = 0;
-        int contador  = 0;
 
-        for(int i = 0; i < transacciones.length; i++){ //n*(2*logP) -> n*logP
+        cantTxUltBloque = transacciones.length;
+
+        for(int i = 0; i < cantTxUltBloque; i++){ //n*(2*logP) -> n*logP
             txActual    = transacciones[i];
             monto       = txActual.monto();
             id_c        = txActual.id_comprador();
@@ -52,21 +57,29 @@ public class Berretacoin {
                 //.get(id_c): que me devuelve un handle del heap
                 //.getValor(): accedo al valor del handle, que es de Class Usuario
                 //.restarSaldo(monto): al usuario que accedí, le resto saldo
-                refUsuarios.get(id_c).getValor().restarSaldo(monto);    //O(log P)
-                sumatoria += monto;
-                contador++;
+                handleHeapUsuarios      = refUsuarios.get(id_c);
+                usuarioModificarSaldo   = handleHeapUsuarios.getValor();
+
+                handleHeapUsuarios.setValor(usuarioModificarSaldo.restarSaldo(monto));  //O(log P)
+
+                //Esto es para el monto medio
+                sumatoriaMontos += monto;
+                cantTxSinCreacion++;
             }
-            refUsuarios.get(id_v).getValor().sumarSaldo(monto);         //O(log P)
+
+            handleHeapUsuarios      = refUsuarios.get(id_v);
+            usuarioModificarSaldo   = handleHeapUsuarios.getValor();
+            handleHeapUsuarios.setValor(usuarioModificarSaldo.sumarSaldo(monto));       //O(log P)
         }
 
-        if(contador != 0)
-            montoMedio = sumatoria/contador;
+        if(cantTxSinCreacion != 0)
+            montoMedio = sumatoriaMontos/cantTxSinCreacion;
         else
             montoMedio = 0;
 
         heapUltBloque.Heapify(handlesUltBloque);    //O(n)
 
-        blockchain.agregarAtras(ultBloque); //O(1)
+        blockchain.agregarAtras(ultBloque);         //O(1)
 
     }
 
@@ -74,9 +87,15 @@ public class Berretacoin {
         return heapUltBloque.ConsultarMaximo().get();
     }
 
-    public Transaccion[] txUltimoBloque(){
-        throw new UnsupportedOperationException("Implementar!");
+    public Transaccion[] txUltimoBloque() {
+        Transaccion[] transacciones = new Transaccion[cantTxUltBloque]; //O(1)
+
+        for (int i = 0; i < cantTxUltBloque; i++) {    //O(n)
+            transacciones[i] = ultBloque.obtener(i);
+        }
+        return transacciones;
     }
+
 
     public int maximoTenedor(){
         return heapUsuarios.ConsultarMaximo().getId();
@@ -87,6 +106,39 @@ public class Berretacoin {
     }
 
     public void hackearTx(){
-        throw new UnsupportedOperationException("Implementar!");
+        ListaEnlazada<Transaccion>.Handle   handleTxEliminar    = null;
+        Transaccion txEliminar = null;
+        Usuario comprador   = null;
+        Usuario vendedor    = null;
+        int     id_c = 0;   //comprador id
+        int     id_v = 0;   //vendedor id
+        int     monto  = 0;
+
+        handleTxEliminar = heapUltBloque.ConsultarMaximo();
+        
+        txEliminar = handleTxEliminar.get();
+
+        monto = txEliminar.monto();
+        id_c = txEliminar.id_comprador();
+        id_v = txEliminar.id_vendedor();
+
+        if(id_c != 0){
+            comprador = refUsuarios.get(id_c).getValor();
+            refUsuarios.get(id_c).setValor(comprador.sumarSaldo(monto));
+            cantTxSinCreacion   -= 1;
+            sumatoriaMontos     -= monto;
+        }
+        vendedor = refUsuarios.get(id_v).getValor();
+        refUsuarios.get(id_v).setValor(vendedor.restarSaldo(monto));
+        
+        handleTxEliminar.delete();
+        heapUltBloque.SacarMaximo();
+
+        cantTxUltBloque -= 1;
+        if(cantTxSinCreacion != 0)
+            montoMedio = sumatoriaMontos/cantTxSinCreacion;
+        else
+            montoMedio = 0;
+        
     }
 }

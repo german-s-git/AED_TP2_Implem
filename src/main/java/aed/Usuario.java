@@ -34,12 +34,14 @@ public class Usuario implements Comparable<Usuario>{
         this.saldo = saldo;
     }
 
-    public void sumarSaldo(int saldo){
-        this.saldo += saldo;
+    public Usuario sumarSaldo(int saldo){
+        Usuario u = new Usuario(this.id, this.saldo + saldo);
+        return u;
     }
 
-    public void restarSaldo(int saldo){
-        this.saldo -= saldo;
+    public Usuario restarSaldo(int saldo){
+        Usuario u = new Usuario(this.id, this.saldo - saldo);
+        return u;
     }
 
 }
