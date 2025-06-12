@@ -35,7 +35,7 @@ public class Berretacoin {
         }
 
         refUsuarios.add(null); //esto es para que coincida la posicion en el array con el ID del usuario
-        refUsuarios.addAll(heapUsuarios.Heapify(listaUsuarios)); // 2*O(P)
+        refUsuarios.addAll(heapUsuarios.Heapify(listaUsuarios)); // heapify es O(P) y concatenar es O(P) = O(2*P)
     }
 
     public void agregarBloque(Transaccion[] transacciones){ // O(n*logP + n) -> O(n*logP)
