@@ -28,28 +28,28 @@ public class HeapSobreArrayList<T extends Comparable<T>> implements Heap<T> {
         return h;
     }
 
-    private void Subir(int indice){
+    private void Subir(int indice){ // O(log n)
         while (indice > 0 && arbol.get(indice).valor.compareTo(arbol.get(Padre(indice)).valor) > 0) {
             Swap(indice, Padre(indice));
             indice = Padre(indice);
         }
     }
 
-    private void Bajar(int indice){
+    private void Bajar(int indice){ // O(log n)
         int hijoIzq = HijoIzq(indice);
         int hijoDer = HijoDer(indice);
         int mayor   = indice;
 
         if(indice > -1){
-            if (hijoIzq < arbol.size() && arbol.get(hijoIzq).valor.compareTo(arbol.get(mayor).valor) > 0)
+            if (hijoIzq < arbol.size() && arbol.get(hijoIzq).valor.compareTo(arbol.get(mayor).valor) > 0) //O(1)
                 mayor = hijoIzq;
-            if (hijoDer < arbol.size() && arbol.get(hijoDer).valor.compareTo(arbol.get(mayor).valor) > 0)
+            if (hijoDer < arbol.size() && arbol.get(hijoDer).valor.compareTo(arbol.get(mayor).valor) > 0) //O(1)
                 mayor = hijoDer;
 
             //si el mayor resultó ser el indice, entonces no hay que seguir bajando nada
             if (mayor != indice){
-                Swap(indice, mayor);
-                Bajar(mayor);
+                Swap(indice, mayor); // O(1)
+                Bajar(mayor); // O(log n)
             }
         }
     }
@@ -88,7 +88,7 @@ public class HeapSobreArrayList<T extends Comparable<T>> implements Heap<T> {
         }
     }
 
-    public ArrayList<Handle> Heapify(List<T> elementos) {
+    public ArrayList<Handle> Heapify(List<T> elementos) {  //O(n)
         ArrayList<Handle> handlesHeapEnOrdenDeEntrada = new ArrayList<>(); 
         arbol = new ArrayList<>(elementos.size());
 
