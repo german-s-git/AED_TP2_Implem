@@ -1,6 +1,6 @@
 package aed;
 
-import java.util.*;
+import java.lang.reflect.Array;
 
 //el "T extends Comparable<T>" es necesario por la implementación del compareTo del Handle de la ListaEnlazada
 //el Comparable<ListaEnlazada<T>> es porque al hacer T comparable, como queremos hacer una listaEnlazada de listaEnlazada, listaEnlazada necesita ser comparable
@@ -134,6 +134,24 @@ public class ListaEnlazada<T extends Comparable<T>> implements Secuencia<T>, Com
         }
 
         actual.elemento = elem;
+    }
+
+    public T[] toArray(Class<T> clazz){
+        Nodo actual = primerito;
+        int i       = 0;
+        int tamanio = this.longitud(); // O(n) :(
+
+        @SuppressWarnings("unchecked")
+        T[] array = (T[]) Array.newInstance(clazz, tamanio); //es la forma en Java de crear un array de tipo generico y que no explote...
+
+        while (actual != null) { // O(n)
+            array[i]    = actual.elemento;
+            actual      = actual.sig;
+            i++;
+        }
+
+        return array;
+        
     }
 
     public ListaEnlazada(ListaEnlazada<T> lista) {

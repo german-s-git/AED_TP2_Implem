@@ -104,7 +104,7 @@ public class HeapSobreArrayList<T extends Comparable<T>> implements Heap<T> {
             Bajar(i); //Reordenamos el subárbol con raiz en i
         }
 
-        return handlesHeapEnOrdenDeEntrada; //PREGUNTAR
+        return handlesHeapEnOrdenDeEntrada;
     }
 
     public class Handle {

@@ -100,12 +100,7 @@ public class Berretacoin {
     }
 
     public Transaccion[] txUltimoBloque() { // O(n)
-        Transaccion[] transacciones = new Transaccion[cantTxUltBloque]; //O(1)
-
-        for (int i = 0; i < cantTxUltBloque; i++) {    //O(n)
-            transacciones[i] = ultBloque.obtener(i);
-        }
-        return transacciones;
+        return ultBloque.toArray(Transaccion.class); // O(2*n), por un tema de Java le tengo que decir de que clase va a ser el array que tengo que crear
     }
 
 
