@@ -136,10 +136,10 @@ public class ListaEnlazada<T extends Comparable<T>> implements Secuencia<T>, Com
         actual.elemento = elem;
     }
 
-    public T[] toArray(Class<T> clazz){
+    public T[] toArray(Class<T> clazz){ // O(2*n) -> O(n)
         Nodo actual = primerito;
         int i       = 0;
-        int tamanio = this.longitud(); // O(n) :(
+        int tamanio = this.longitud(); // O(n)  :(
 
         @SuppressWarnings("unchecked")
         T[] array = (T[]) Array.newInstance(clazz, tamanio); //es la forma en Java de crear un array de tipo generico y que no explote...
@@ -151,7 +151,6 @@ public class ListaEnlazada<T extends Comparable<T>> implements Secuencia<T>, Com
         }
 
         return array;
-        
     }
 
     public ListaEnlazada(ListaEnlazada<T> lista) {
