@@ -3,105 +3,50 @@ package aed;
 import java.util.ArrayList;
 
 public class Berretacoin {
-    private ListaEnlazada<BloqueTx>       blockchain;
-    private BloqueTx ultimoBloque;
-    //private ListaEnlazada<Transaccion>                      ultBloque;
-    //private HeapSobreArrayList<ListaEnlazada<Transaccion>.Handle> heapUltBloque;
-    private GestionUsuario                                  gestionadorUsuarios;
-    //private HeapSobreArrayList<Usuario>                     heapUsuarios;
-    //private ArrayList<HeapSobreArrayList<Usuario>.Handle>   refUsuarios;
+    private ListaEnlazada<BloqueTx>     blockchain;
+    private BloqueTx                    ultimoBloque;
+    private GestionUsuario              gestionadorUsuarios;
 
     private int montoMedio;
     private int sumatoriaMontos;
     private int cantTxUltBloque;
     private int cantTxSinCreacion;
 
-
-    public Berretacoin(int n_usuarios){ // 3*P -> O(P)
+    public Berretacoin(int n_usuarios){ // O(P)
         blockchain      = new ListaEnlazada<>();
-
-        //AGREGADO A BLOQUETX
-        //heapUltBloque   = new HeapSobreArrayList<>();
-
-        /*
-        ArrayList<Usuario> listaUsuarios = new ArrayList<>();
-        heapUsuarios    = new HeapSobreArrayList<>();
-        refUsuarios     = new ArrayList<>();
-        */
 
         montoMedio          = 0;
         sumatoriaMontos     = 0;
         cantTxUltBloque     = 0;
         cantTxSinCreacion   = 0;
 
-        /*
-        //como queremos que el id usuario coincida con la posicion en el array, metemos al "usuario 0" pero es un null
-        for(int i=1; i<=n_usuarios; i++){                   //O(P)
-            Usuario u = new Usuario(i, 0);
-            listaUsuarios.add(u);
-        }
-        */
-
-        /*
-        refUsuarios.add(null); //esto es para que coincida la posicion en el array con el ID del usuario
-        refUsuarios.addAll(heapUsuarios.Heapify(listaUsuarios)); // heapify es O(P) y concatenar es O(P) = O(2*P)
-        */
-        gestionadorUsuarios = new GestionUsuario(n_usuarios);
+        ultimoBloque        = new BloqueTx(); //O(1)
+        gestionadorUsuarios = new GestionUsuario(n_usuarios); //O(P)
     }
 
-    public void agregarBloque(Transaccion[] transacciones){ // O(n*logP + n) -> O(n*logP)
-        //ultBloque   = new ListaEnlazada<>(); //AGREGADO A BLOQUETX
-        //ArrayList<ListaEnlazada<Transaccion>.Handle> handlesUltBloque = new ArrayList<>(transacciones.length); //AGREGADO A BLOQUETX
-        //HeapSobreArrayList<Usuario>.Handle handleHeapUsuarios = null;
-        //Usuario usuarioModificarSaldo = null;
+    public void agregarBloque(Transaccion[] transacciones){ // O(n + n*logP) -> O(n*logP)
         ultimoBloque = new BloqueTx(transacciones); //O(n)
 
-        //Transaccion txActual = null;
-        int monto = 0;
-        int id_c  = 0; //comprador
-        int id_v  = 0; //vendedor
-
-        //como es un nuevo bloque, reseteo todas las variables (algunas no hace falta resetearlas pero se hace a modo de prolijidad)
+        //como es un nuevo bloque, reseteo todas las variables
         montoMedio          = 0;
         sumatoriaMontos     = 0;
-        cantTxUltBloque     = 0;
         cantTxSinCreacion   = 0;
 
         cantTxUltBloque = transacciones.length;
 
         for(int i = 0; i < cantTxUltBloque; i++){ // n*(2*logP) -> n*logP
-            //txActual    = transacciones[i];
-            monto       = transacciones[i].monto();
-            id_c        = transacciones[i].id_comprador();
-            id_v        = transacciones[i].id_vendedor();
-
-            //handlesUltBloque.add(ultBloque.agregarAtras(txActual));    // O(1) AGREGADO A BLOQUETX
+            int monto       = transacciones[i].monto();
+            int id_c        = transacciones[i].id_comprador();
+            int id_v        = transacciones[i].id_vendedor();
 
             if(id_c != 0){ //txActual.id_comprador()
-                //refUsuarios: accedo al array de referencias que apunta al heapUsuarios,
-                //.get(id_c): que me devuelve un handle del heap
-                //.getValor(): accedo al valor del handle, que es de Class Usuario
-                //.restarSaldo(monto): al usuario que accedí, le resto saldo
-                /*
-                handleHeapUsuarios      = refUsuarios.get(id_c);
-                usuarioModificarSaldo   = handleHeapUsuarios.getValor();
-
-                handleHeapUsuarios.setValor(usuarioModificarSaldo.restarSaldo(monto));  //reacomodar heap usuarios -> O(log P)
-                */
-
                 gestionadorUsuarios.restarSaldoUsuario(id_c, monto); //O(log P)
 
                 //Esto es para el monto medio
                 sumatoriaMontos += monto;       //O(1)
                 cantTxSinCreacion++;            //O(1)
-                
             }
 
-            /*
-            handleHeapUsuarios      = refUsuarios.get(id_v);            //acceder ArrayList -> O(1)
-            usuarioModificarSaldo   = handleHeapUsuarios.getValor();    //acceder ArrayList -> O(1)
-            handleHeapUsuarios.setValor(usuarioModificarSaldo.sumarSaldo(monto));   //reacomodar heap usuarios -> O(log P)
-            */
             gestionadorUsuarios.sumarSaldoUsuario(id_v, monto); //O(log P)
         }
 
@@ -110,10 +55,7 @@ public class Berretacoin {
         else
             montoMedio = 0;
 
-        //heapUltBloque.Heapify(handlesUltBloque);    //heapificar con algoritmo floyd -> O(n) AGREGADO A BLOQUETX
-
-        blockchain.agregarAtras(ultimoBloque);         //agregar al final de una lista enlazada -> O(1)
-
+        blockchain.agregarAtras(ultimoBloque);  //agregar al final de una lista enlazada -> O(1)
     }
 
     public Transaccion txMayorValorUltimoBloque(){ // O(1)
@@ -133,49 +75,25 @@ public class Berretacoin {
         return montoMedio;
     }
 
-    public void hackearTx(){ // O(2*logP + log n) -> O(log P + log n)
-        //ListaEnlazada<Transaccion>.Handle handleTxEliminar = null; AGREGADO A BLOQUETX
+    public void hackearTx(){ // O(log n + 2*logP) -> O(log P + log n)
         Transaccion txEliminar  = ultimoBloque.hackearTx(); //O(log n)
-        /*
-        Usuario comprador       = null;
-        Usuario vendedor        = null;
-        */
-        int     id_c    = 0;   //comprador id
-        int     id_v    = 0;   //vendedor id
-        int     monto   = 0;
 
-        //handleTxEliminar    = heapUltBloque.ConsultarMaximo(); //acceder a la raiz del heap -> O(1) AGREGADO A BLOQUETX
-        
-        //txEliminar          = handleTxEliminar.get(); // O(1) AGREGADO A BLOQUETX
-
-        monto   = txEliminar.monto();
-        id_c    = txEliminar.id_comprador();
-        id_v    = txEliminar.id_vendedor();
+        int     id_c    = txEliminar.id_comprador();  //comprador id
+        int     id_v    = txEliminar.id_vendedor();   //vendedor id
+        int     monto   = txEliminar.monto();;
 
         if(id_c != 0){
-            /*
-            comprador = refUsuarios.get(id_c).getValor();
-            refUsuarios.get(id_c).setValor(comprador.sumarSaldo(monto)); //reacomodar heap usuarios -> O(log P)
-            */
             gestionadorUsuarios.sumarSaldoUsuario(id_c, monto); //O(log P)
             cantTxSinCreacion   -= 1;
             sumatoriaMontos     -= monto;
         }
-        /*
-        vendedor = refUsuarios.get(id_v).getValor();
-        refUsuarios.get(id_v).setValor(vendedor.restarSaldo(monto)); //reacomodar heap usuarios -> O(log P)
-        */
+
         gestionadorUsuarios.restarSaldoUsuario(id_v, monto); //O(log P)
-        
-        //AGREGADO A BLOQUE TX
-        //handleTxEliminar.delete();   //O(1)
-        //heapUltBloque.SacarMaximo(); //reacomodar heap transacciones ult bloque -> O(log n)
 
         cantTxUltBloque -= 1;
         if(cantTxSinCreacion != 0)
             montoMedio = sumatoriaMontos/cantTxSinCreacion;
         else
             montoMedio = 0;
-        
     }
 }

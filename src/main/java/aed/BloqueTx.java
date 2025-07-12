@@ -5,14 +5,13 @@ import java.util.ArrayList;
 public class BloqueTx implements Comparable<BloqueTx> {
     private ListaEnlazada<Transaccion>                            ultBloque;
     private HeapSobreArrayList<ListaEnlazada<Transaccion>.Handle> heapUltBloque;
-    
 
-    public BloqueTx(){
+    public BloqueTx(){ //O(1)
         heapUltBloque   = new HeapSobreArrayList<>();
         ultBloque       = new ListaEnlazada<>();
     }
 
-    public BloqueTx(Transaccion[] transacciones){   //O(n)
+    public BloqueTx(Transaccion[] transacciones){   //O(2*n) -> O(n)
         ArrayList<ListaEnlazada<Transaccion>.Handle> handlesUltBloque = new ArrayList<>(transacciones.length);
 
         heapUltBloque   = new HeapSobreArrayList<>();
@@ -25,7 +24,10 @@ public class BloqueTx implements Comparable<BloqueTx> {
     }
 
     public Transaccion txMayorValor(){ //O(1)
-        return heapUltBloque.ConsultarMaximo().get(); //acceder a la raiz del heap -> O(1)
+        if(heapUltBloque.ConsultarMaximo() != null)       
+            return heapUltBloque.ConsultarMaximo().get(); //acceder a la raiz del heap -> O(1)
+        else
+            return null; //Si bloque esta vacio, devuelvo null
     }
 
     public Transaccion[] toArray(){ //O(n)
@@ -45,7 +47,7 @@ public class BloqueTx implements Comparable<BloqueTx> {
         return txEliminar;
     }
 
-    //en berretacoin no se utiliza, pero necesito que esté definido 
+    //en berretacoin no se utiliza, pero necesito que esté definido para que sea comparable
     @Override
     public int compareTo(BloqueTx otra) {
         return Integer.compare(this.ultBloque.longitud(), otra.ultBloque.longitud());

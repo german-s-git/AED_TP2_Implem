@@ -6,7 +6,7 @@ public class GestionUsuario {
     private HeapSobreArrayList<Usuario>                     heapUsuarios;
     private ArrayList<HeapSobreArrayList<Usuario>.Handle>   refUsuarios;
 
-    public GestionUsuario(int n_usuarios){
+    public GestionUsuario(int n_usuarios){ //O(3*P) -> O(P)
         ArrayList<Usuario> listaUsuarios = new ArrayList<>();
         heapUsuarios    = new HeapSobreArrayList<>();
         refUsuarios     = new ArrayList<>();
@@ -21,16 +21,15 @@ public class GestionUsuario {
         refUsuarios.addAll(heapUsuarios.Heapify(listaUsuarios)); // heapify es O(P) y concatenar es O(P) = O(2*P)
     }
 
-    public void sumarSaldoUsuario(int id_usuario, int monto){
-        HeapSobreArrayList<Usuario>.Handle handleHeapUsuarios = null;
-        Usuario usuarioModificarSaldo = null;
-
-        handleHeapUsuarios      = refUsuarios.get(id_usuario);            //acceder ArrayList -> O(1)
-        usuarioModificarSaldo   = handleHeapUsuarios.getValor();    //acceder ArrayList -> O(1)
-        handleHeapUsuarios.setValor(usuarioModificarSaldo.sumarSaldo(monto));   //reacomodar heap usuarios -> O(log P)
+    public void sumarSaldoUsuario(int id_usuario, int monto){   //O(log P)
+        modificarSaldoUsuario(id_usuario, monto, 1);  //O(log P)
     }
 
-    public void restarSaldoUsuario(int id_usuario, int monto){
+    public void restarSaldoUsuario(int id_usuario, int monto){  //O(log P)
+        modificarSaldoUsuario(id_usuario, monto, 0);  //O(log P)
+    }
+
+    private void modificarSaldoUsuario(int id_usuario, int monto, int operacion){ //O(log P)
         HeapSobreArrayList<Usuario>.Handle handleHeapUsuarios = null;
         Usuario usuarioModificarSaldo = null;
 
@@ -38,16 +37,16 @@ public class GestionUsuario {
         //.get(id_c): que me devuelve un handle del heap
         //.getValor(): accedo al valor del handle, que es de Class Usuario
         //.restarSaldo(monto): al usuario que accedí, le resto saldo
-                
-        handleHeapUsuarios      = refUsuarios.get(id_usuario);
-        usuarioModificarSaldo   = handleHeapUsuarios.getValor();
-
-        handleHeapUsuarios.setValor(usuarioModificarSaldo.restarSaldo(monto));  //reacomodar heap usuarios -> O(log P)
-    }    
-
-    public int verMaximo(){
-        return heapUsuarios.ConsultarMaximo().getId(); //acceder a la raiz del heap -> O(1)
+        handleHeapUsuarios      = refUsuarios.get(id_usuario);      //acceder ArrayList -> O(1)
+        usuarioModificarSaldo   = handleHeapUsuarios.getValor();    //acceder ArrayList -> O(1)
+        if(operacion == 1)
+            handleHeapUsuarios.setValor(usuarioModificarSaldo.sumarSaldo(monto));   //reacomodar heap usuarios -> O(log P)
+        else if (operacion == 0)
+            handleHeapUsuarios.setValor(usuarioModificarSaldo.restarSaldo(monto));  //reacomodar heap usuarios -> O(log P)
     }
 
+    public int verMaximo(){ //O(1)
+        return heapUsuarios.ConsultarMaximo().getId(); //acceder a la raiz del heap -> O(1)
+    }
 
 }
