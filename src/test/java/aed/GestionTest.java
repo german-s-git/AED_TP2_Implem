@@ -24,29 +24,42 @@ public class GestionTest {
     }
 
     @Test
-    void dosUsuarioSumarSaldo(){
+    void variosUsuarioSumarRestarSaldo(){
         GestionUsuario gestionadorUsuarios;
+
+        Transaccion[] transacciones = new Transaccion[] {
+            new Transaccion(0, 0, 2, 10),
+            new Transaccion(1, 2, 3, 4),
+            new Transaccion(2, 3, 4, 1)
+            /*
+            * saldo usuario 2 = 6
+            * saldo usuario 3 = 3
+            * saldo usuario 4 = 1
+            */
+        };
         
-        gestionadorUsuarios = new GestionUsuario(2);
+        gestionadorUsuarios = new GestionUsuario(4);
 
-        gestionadorUsuarios.sumarSaldoUsuario(2, 10);
+        gestionadorUsuarios.actualizarSaldos(transacciones);
 
-        assertEquals(2, gestionadorUsuarios.verMaximo()); 
-    }
+        assertEquals(2, gestionadorUsuarios.verMaximo()); //el usuario que mas tiene es el 2
 
-    @Test
-    void dosUsuarioSumarRestarSaldo(){
-        GestionUsuario gestionadorUsuarios;
-        
-        gestionadorUsuarios = new GestionUsuario(2);
+        transacciones = new Transaccion[] {
+            new Transaccion(0, 2, 3, 5),
+            new Transaccion(1, 4, 3, 1)
+            /*
+            * saldo usuario 2 = 1
+            * saldo usuario 3 = 9
+            * saldo usuario 4 = 0
+            */
+        };
 
-        gestionadorUsuarios.sumarSaldoUsuario(2, 10);
-        gestionadorUsuarios.sumarSaldoUsuario(1, 6);
+        gestionadorUsuarios.actualizarSaldos(transacciones); //actualizo saldos
 
-        assertEquals(2, gestionadorUsuarios.verMaximo());
+        assertEquals(3, gestionadorUsuarios.verMaximo()); // ahora el usuario que mas tiene es el 3
 
-        gestionadorUsuarios.restarSaldoUsuario(2, 8);
+        gestionadorUsuarios.devolverSaldo(transacciones[0]); //se "hackea" manualmente, siendo transacciones[0] la de mayor monto
 
-        assertEquals(1, gestionadorUsuarios.verMaximo());
+        assertEquals(2, gestionadorUsuarios.verMaximo()); // volvemos a que el usuario que mas tiene es el 2
     }
 }

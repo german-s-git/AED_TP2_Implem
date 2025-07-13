@@ -22,44 +22,34 @@ public class GestionUsuario {
         refUsuarios.addAll(heapUsuarios.Heapify(listaUsuarios)); // heapify es O(P) y concatenar es O(P) = O(2*P)
     }
 
-    //O(n*(2*logP)) -> O(n*logP)
+    //O(n*logP)
     public void actualizarSaldos(Transaccion[] transacciones){
-        for(int i = 0; i < transacciones.length; i++){ // n*(logP + logP)
-            int monto       = transacciones[i].monto();
-            int id_c        = transacciones[i].id_comprador();
-            int id_v        = transacciones[i].id_vendedor();
-
-            if(id_c != 0){ //txActual.id_comprador()
-                this.restarSaldoUsuario(id_c, monto); //O(log P)
-            }
-            this.sumarSaldoUsuario(id_v, monto);      //O(log P)
+        for(int i = 0; i < transacciones.length; i++){ // O(n*logP)
+            actualizarSaldo(transacciones[i], false);    // O(logP)
         }
     }
 
-    //O(2*logP) -> O(logP)
+    // O(2*logP) -> O(logP)
+    private void actualizarSaldo(Transaccion tx, boolean reintegrarSaldo){
+        int monto       = tx.monto();
+        int id_c        = tx.id_comprador();
+        int id_v        = tx.id_vendedor();
+
+        //reintegrarSaldo == false -> resta al comprador (si corresponde), suma el vendedor
+        //reintegrarSaldo == trues -> suma al comprador (si corresponde), resta al vendedor
+        if (id_c != 0)
+            modificarSaldoUsuario(id_c, monto, reintegrarSaldo);    // O(logP)
+
+        modificarSaldoUsuario(id_v, monto, !reintegrarSaldo);       // O(logP)
+    }
+
+    //O(logP)
     public void devolverSaldo(Transaccion txDevolver){
-        int     id_c    = txDevolver.id_comprador();  //comprador id
-        int     id_v    = txDevolver.id_vendedor();   //vendedor id
-        int     monto   = txDevolver.monto();;
-
-        if(id_c != 0){
-            sumarSaldoUsuario(id_c, monto); //O(log P)
-        }
-        restarSaldoUsuario(id_v, monto);    //O(log P)
+        actualizarSaldo(txDevolver, true); // O(logP)
     }
 
     //O(log P)
-    public void sumarSaldoUsuario(int id_usuario, int monto){
-        modificarSaldoUsuario(id_usuario, monto, 1);  //O(log P)
-    }
-
-    //O(log P)
-    public void restarSaldoUsuario(int id_usuario, int monto){
-        modificarSaldoUsuario(id_usuario, monto, 0);  //O(log P)
-    }
-
-    //O(log P)
-    private void modificarSaldoUsuario(int id_usuario, int monto, int operacion){
+    private void modificarSaldoUsuario(int id_usuario, int monto, boolean sumar){
         HeapSobreArrayList<Usuario>.Handle handleHeapUsuarios = null;
         Usuario usuarioModificarSaldo = null;
 
@@ -69,9 +59,9 @@ public class GestionUsuario {
         //.restarSaldo(monto): al usuario que accedí, le resto saldo
         handleHeapUsuarios      = refUsuarios.get(id_usuario);      //acceder ArrayList -> O(1)
         usuarioModificarSaldo   = handleHeapUsuarios.getValor();    //acceder ArrayList -> O(1)
-        if(operacion == 1)
+        if(sumar == true)
             handleHeapUsuarios.setValor(usuarioModificarSaldo.sumarSaldo(monto));   //reacomodar heap usuarios -> O(log P)
-        else if (operacion == 0)
+        else if (sumar == false)
             handleHeapUsuarios.setValor(usuarioModificarSaldo.restarSaldo(monto));  //reacomodar heap usuarios -> O(log P)
     }
 

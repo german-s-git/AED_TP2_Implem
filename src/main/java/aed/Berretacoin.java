@@ -18,9 +18,7 @@ public class Berretacoin {
     // O(n + n*logP) -> O(n*logP)
     public void agregarBloque(Transaccion[] transacciones){
         ultimoBloque = new BloqueTx(transacciones);          // O(n)
-
         gestionadorUsuarios.actualizarSaldos(transacciones); // O(n*logP)
-
         blockchain.agregarAtras(ultimoBloque);  //agregar al final de una lista enlazada -> O(1)
     }
 
@@ -41,13 +39,12 @@ public class Berretacoin {
 
     // O(1)
     public int montoMedioUltimoBloque(){
-        return ultimoBloque.verMontoMedio();
+        return ultimoBloque.verMontoMedio();    // O(1)
     }
 
     // O(log P + log n)
     public void hackearTx(){
-        Transaccion txEliminar  = ultimoBloque.hackearTx(); // O(log n)
-
-        gestionadorUsuarios.devolverSaldo(txEliminar);      // O(log P)
+        Transaccion txEliminada  = ultimoBloque.hackearTx(); // O(log n)
+        gestionadorUsuarios.devolverSaldo(txEliminada);      // O(log P)
     }
 }
