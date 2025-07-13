@@ -6,13 +6,14 @@ public class GestionUsuario {
     private HeapSobreArrayList<Usuario>                     heapUsuarios;
     private ArrayList<HeapSobreArrayList<Usuario>.Handle>   refUsuarios;
 
-    public GestionUsuario(int n_usuarios){ //O(3*P) -> O(P)
+    //O(3*P) -> O(P)
+    public GestionUsuario(int n_usuarios){
         ArrayList<Usuario> listaUsuarios = new ArrayList<>();
         heapUsuarios    = new HeapSobreArrayList<>();
         refUsuarios     = new ArrayList<>();
 
         //como queremos que el id usuario coincida con la posicion en el array, metemos al "usuario 0" pero es un null
-        for(int i=1; i<=n_usuarios; i++){                   //O(P)
+        for(int i=1; i<=n_usuarios; i++){   //O(P)
             Usuario u = new Usuario(i, 0);
             listaUsuarios.add(u);
         }
@@ -21,8 +22,9 @@ public class GestionUsuario {
         refUsuarios.addAll(heapUsuarios.Heapify(listaUsuarios)); // heapify es O(P) y concatenar es O(P) = O(2*P)
     }
 
-    public void actualizarSaldos(Transaccion[] transacciones){  //O(n*logP)
-        for(int i = 0; i < transacciones.length; i++){ // n*(2*logP) -> n*logP
+    //O(n*(2*logP)) -> O(n*logP)
+    public void actualizarSaldos(Transaccion[] transacciones){
+        for(int i = 0; i < transacciones.length; i++){ // n*(logP + logP)
             int monto       = transacciones[i].monto();
             int id_c        = transacciones[i].id_comprador();
             int id_v        = transacciones[i].id_vendedor();
@@ -34,7 +36,8 @@ public class GestionUsuario {
         }
     }
 
-    public void devolverSaldo(Transaccion txDevolver){ //O(log P)
+    //O(2*logP) -> O(logP)
+    public void devolverSaldo(Transaccion txDevolver){
         int     id_c    = txDevolver.id_comprador();  //comprador id
         int     id_v    = txDevolver.id_vendedor();   //vendedor id
         int     monto   = txDevolver.monto();;
@@ -45,15 +48,18 @@ public class GestionUsuario {
         restarSaldoUsuario(id_v, monto);    //O(log P)
     }
 
-    public void sumarSaldoUsuario(int id_usuario, int monto){   //O(log P)
+    //O(log P)
+    public void sumarSaldoUsuario(int id_usuario, int monto){
         modificarSaldoUsuario(id_usuario, monto, 1);  //O(log P)
     }
 
-    public void restarSaldoUsuario(int id_usuario, int monto){  //O(log P)
+    //O(log P)
+    public void restarSaldoUsuario(int id_usuario, int monto){
         modificarSaldoUsuario(id_usuario, monto, 0);  //O(log P)
     }
 
-    private void modificarSaldoUsuario(int id_usuario, int monto, int operacion){ //O(log P)
+    //O(log P)
+    private void modificarSaldoUsuario(int id_usuario, int monto, int operacion){
         HeapSobreArrayList<Usuario>.Handle handleHeapUsuarios = null;
         Usuario usuarioModificarSaldo = null;
 
@@ -69,7 +75,8 @@ public class GestionUsuario {
             handleHeapUsuarios.setValor(usuarioModificarSaldo.restarSaldo(monto));  //reacomodar heap usuarios -> O(log P)
     }
 
-    public int verMaximo(){ //O(1)
+    //O(1)
+    public int verMaximo(){
         return heapUsuarios.ConsultarMaximo().getId(); //acceder a la raiz del heap -> O(1)
     }
 
