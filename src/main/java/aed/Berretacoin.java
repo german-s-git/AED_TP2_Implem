@@ -42,7 +42,7 @@ public class Berretacoin {
         return ultimoBloque.verMontoMedio();    // O(1)
     }
 
-    // O(log P + log n)
+    // O(log n + log P)
     public void hackearTx(){
         Transaccion txEliminada  = ultimoBloque.hackearTx(); // O(log n)
         gestionadorUsuarios.devolverSaldo(txEliminada);      // O(log P)
