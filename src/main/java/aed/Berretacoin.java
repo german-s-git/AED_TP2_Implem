@@ -7,18 +7,19 @@ public class Berretacoin {
     private BloqueTx                    ultimoBloque;
     private GestionUsuario              gestionadorUsuarios;
 
+    /*
     private int montoMedio;
     private int sumatoriaMontos;
     private int cantTxUltBloque;
-    private int cantTxSinCreacion;
+    private int cantTxSinCreacion;*/
 
     public Berretacoin(int n_usuarios){ // O(P)
         blockchain      = new ListaEnlazada<>();
-
+        /*
         montoMedio          = 0;
         sumatoriaMontos     = 0;
         cantTxUltBloque     = 0;
-        cantTxSinCreacion   = 0;
+        cantTxSinCreacion   = 0;*/
 
         ultimoBloque        = new BloqueTx(); //O(1)
         gestionadorUsuarios = new GestionUsuario(n_usuarios); //O(P)
@@ -27,15 +28,16 @@ public class Berretacoin {
     public void agregarBloque(Transaccion[] transacciones){ // O(n + n*logP) -> O(n*logP)
         ultimoBloque = new BloqueTx(transacciones); //O(n)
 
-        //como es un nuevo bloque, reseteo todas las variables
+        /* 
         montoMedio          = 0;
         sumatoriaMontos     = 0;
         cantTxSinCreacion   = 0;
 
-        cantTxUltBloque = transacciones.length;
+        cantTxUltBloque = transacciones.length;*/
 
         gestionadorUsuarios.actualizarSaldos(transacciones);    //O(n*logP)
 
+        /*
         for(int i = 0; i < cantTxUltBloque; i++){ // O(n)
             int monto       = transacciones[i].monto();
             int id_c        = transacciones[i].id_comprador();
@@ -50,6 +52,7 @@ public class Berretacoin {
             montoMedio = sumatoriaMontos/cantTxSinCreacion;
         else
             montoMedio = 0;
+        */
 
         blockchain.agregarAtras(ultimoBloque);  //agregar al final de una lista enlazada -> O(1)
     }
@@ -68,7 +71,7 @@ public class Berretacoin {
     }
 
     public int montoMedioUltimoBloque(){ // O(1)
-        return montoMedio;
+        return ultimoBloque.verMontoMedio();
     }
 
     public void hackearTx(){ // O(log n + 2*logP) -> O(log P + log n)
@@ -79,6 +82,7 @@ public class Berretacoin {
 
         gestionadorUsuarios.devolverSaldo(txEliminar); //O(log P)
 
+        /*
         if(id_c != 0){
             cantTxSinCreacion   -= 1;
             sumatoriaMontos     -= monto;
@@ -89,5 +93,6 @@ public class Berretacoin {
             montoMedio = sumatoriaMontos/cantTxSinCreacion;
         else
             montoMedio = 0;
+            */
     }
 }

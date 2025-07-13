@@ -6,9 +6,19 @@ public class BloqueTx implements Comparable<BloqueTx> {
     private ListaEnlazada<Transaccion>                            ultBloque;
     private HeapSobreArrayList<ListaEnlazada<Transaccion>.Handle> heapUltBloque;
 
+    private int montoMedio;
+    private int sumatoriaMontos;
+    private int cantTxUltBloque;
+    private int cantTxSinCreacion;
+
     public BloqueTx(){ //O(1)
         heapUltBloque   = new HeapSobreArrayList<>();
         ultBloque       = new ListaEnlazada<>();
+
+        montoMedio          = 0;
+        sumatoriaMontos     = 0;
+        cantTxUltBloque     = 0;
+        cantTxSinCreacion   = 0;
     }
 
     public BloqueTx(Transaccion[] transacciones){   //O(2*n) -> O(n)
@@ -17,10 +27,33 @@ public class BloqueTx implements Comparable<BloqueTx> {
         heapUltBloque   = new HeapSobreArrayList<>();
         ultBloque       = new ListaEnlazada<>();
 
-        for(int i = 0; i < transacciones.length; i++){ // O(n)
+        //como es un nuevo bloque, reseteo todas las variables
+        montoMedio          = 0;
+        sumatoriaMontos     = 0;
+        cantTxSinCreacion   = 0;
+        cantTxUltBloque     = transacciones.length;
+
+        for(int i = 0; i < cantTxUltBloque; i++){ // O(n)
             handlesUltBloque.add(ultBloque.agregarAtras(transacciones[i]));    // O(1)
+
+            if(transacciones[i].id_comprador() != 0){ //txActual.id_comprador()
+                sumatoriaMontos += transacciones[i].monto();       //O(1)
+                cantTxSinCreacion++;            //O(1)
+            }
         }
+        calcularMontoMedio(sumatoriaMontos, cantTxSinCreacion);
         heapUltBloque.Heapify(handlesUltBloque);    //heapificar con algoritmo floyd -> O(n)
+    }
+
+    private void calcularMontoMedio(int sum, int cant){
+        if(cant != 0)
+            montoMedio = sum/cant;
+        else
+            montoMedio = 0;
+    }
+
+    public int verMontoMedio(){
+        return montoMedio;
     }
 
     public Transaccion txMayorValor(){ //O(1)
@@ -43,6 +76,14 @@ public class BloqueTx implements Comparable<BloqueTx> {
 
         handleTxEliminar.delete();   //O(1)
         heapUltBloque.SacarMaximo(); //reacomodar heap transacciones ult bloque -> O(log n)
+
+        if(txEliminar.id_comprador() != 0){
+            cantTxSinCreacion   -= 1;
+            sumatoriaMontos     -= txEliminar.monto();
+        }
+        cantTxUltBloque -= 1;
+
+        calcularMontoMedio(sumatoriaMontos, cantTxSinCreacion);
 
         return txEliminar;
     }
