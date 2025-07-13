@@ -21,6 +21,30 @@ public class GestionUsuario {
         refUsuarios.addAll(heapUsuarios.Heapify(listaUsuarios)); // heapify es O(P) y concatenar es O(P) = O(2*P)
     }
 
+    public void actualizarSaldos(Transaccion[] transacciones){  //O(n*logP)
+        for(int i = 0; i < transacciones.length; i++){ // n*(2*logP) -> n*logP
+            int monto       = transacciones[i].monto();
+            int id_c        = transacciones[i].id_comprador();
+            int id_v        = transacciones[i].id_vendedor();
+
+            if(id_c != 0){ //txActual.id_comprador()
+                this.restarSaldoUsuario(id_c, monto); //O(log P)
+            }
+            this.sumarSaldoUsuario(id_v, monto);      //O(log P)
+        }
+    }
+
+    public void devolverSaldo(Transaccion txDevolver){ //O(log P)
+        int     id_c    = txDevolver.id_comprador();  //comprador id
+        int     id_v    = txDevolver.id_vendedor();   //vendedor id
+        int     monto   = txDevolver.monto();;
+
+        if(id_c != 0){
+            sumarSaldoUsuario(id_c, monto); //O(log P)
+        }
+        restarSaldoUsuario(id_v, monto);    //O(log P)
+    }
+
     public void sumarSaldoUsuario(int id_usuario, int monto){   //O(log P)
         modificarSaldoUsuario(id_usuario, monto, 1);  //O(log P)
     }

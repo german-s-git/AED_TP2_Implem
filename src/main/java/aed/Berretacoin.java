@@ -34,20 +34,16 @@ public class Berretacoin {
 
         cantTxUltBloque = transacciones.length;
 
-        for(int i = 0; i < cantTxUltBloque; i++){ // n*(2*logP) -> n*logP
+        gestionadorUsuarios.actualizarSaldos(transacciones);    //O(n*logP)
+
+        for(int i = 0; i < cantTxUltBloque; i++){ // O(n)
             int monto       = transacciones[i].monto();
             int id_c        = transacciones[i].id_comprador();
-            int id_v        = transacciones[i].id_vendedor();
 
             if(id_c != 0){ //txActual.id_comprador()
-                gestionadorUsuarios.restarSaldoUsuario(id_c, monto); //O(log P)
-
-                //Esto es para el monto medio
                 sumatoriaMontos += monto;       //O(1)
                 cantTxSinCreacion++;            //O(1)
             }
-
-            gestionadorUsuarios.sumarSaldoUsuario(id_v, monto); //O(log P)
         }
 
         if(cantTxSinCreacion != 0)
@@ -79,16 +75,14 @@ public class Berretacoin {
         Transaccion txEliminar  = ultimoBloque.hackearTx(); //O(log n)
 
         int     id_c    = txEliminar.id_comprador();  //comprador id
-        int     id_v    = txEliminar.id_vendedor();   //vendedor id
         int     monto   = txEliminar.monto();;
 
+        gestionadorUsuarios.devolverSaldo(txEliminar); //O(log P)
+
         if(id_c != 0){
-            gestionadorUsuarios.sumarSaldoUsuario(id_c, monto); //O(log P)
             cantTxSinCreacion   -= 1;
             sumatoriaMontos     -= monto;
         }
-
-        gestionadorUsuarios.restarSaldoUsuario(id_v, monto); //O(log P)
 
         cantTxUltBloque -= 1;
         if(cantTxSinCreacion != 0)
